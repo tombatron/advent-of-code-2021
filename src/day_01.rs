@@ -50,7 +50,7 @@ mod tests {
 
     #[test]
     fn part_one_external_input_works() {
-        let input = get_external_input("day_01_input.txt");
+        let input = get_external_input("day_01_input.txt", parse_line);
 
         let count = depth_measurement_increase_counter(input);
 
@@ -68,10 +68,14 @@ mod tests {
 
     #[test]
     fn part_two_external_input_works() {
-        let input = get_external_input("day_01_input.txt");
+        let input = get_external_input("day_01_input.txt", parse_line);
 
         let count = sliding_window_depth_measurement_increase_counter(&input);
 
         assert_eq!(1150, count);
+    }
+
+    fn parse_line(line: String) -> usize {
+        line.parse::<usize>().expect("I guess I couldn't parse that...")
     }
 }
