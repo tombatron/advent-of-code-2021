@@ -20,10 +20,7 @@ pub fn sliding_window_depth_measurement_increase_counter(depth_readings: &Vec<us
     let mut offset = 0;
 
     while still_sliding {
-        let sum = depth_readings.into_iter()
-            .skip(offset)
-            .take(3)
-            .sum();
+        let sum = depth_readings.into_iter().skip(offset).take(3).sum();
 
         sum_of_readings.push(sum);
 
@@ -36,8 +33,7 @@ pub fn sliding_window_depth_measurement_increase_counter(depth_readings: &Vec<us
 
 #[cfg(test)]
 mod tests {
-    use std::fs::File;
-    use std::io::{BufRead, BufReader};
+    use crate::aoc_utils::get_external_input;
 
     use super::{
         depth_measurement_increase_counter, sliding_window_depth_measurement_increase_counter,
@@ -77,25 +73,5 @@ mod tests {
         let count = sliding_window_depth_measurement_increase_counter(&input);
 
         assert_eq!(1150, count);
-    }
-
-    fn get_external_input(file_name: &str) -> Vec<usize> {
-        let day_one_input_file =
-            File::open(file_name).expect("I guess that file didn't exist.");
-
-        let reader = BufReader::new(day_one_input_file);
-
-        let mut result = Vec::new();
-
-        for line in reader.lines().into_iter() {
-            let line = line.expect("I guess I couldn't read that line...");
-            let line_input = line
-                .parse::<usize>()
-                .expect("Line entry not parsable into usize.");
-
-            result.push(line_input);
-        }
-
-        result
     }
 }
