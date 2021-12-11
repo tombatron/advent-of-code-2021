@@ -3,20 +3,18 @@ use std::{
     io::{BufRead, BufReader},
 };
 
-pub fn get_external_input(file_name: &str) -> Vec<usize> {
-    let day_one_input_file = File::open(file_name).expect("I guess that file didn't exist.");
+pub fn get_external_input<T>(file_name: &str, result_parser: fn(String) -> T) -> Vec<T> {
+    let input_file = File::open(file_name)
+        .expect("I guess I couldn't open that file...");
 
-    let reader = BufReader::new(day_one_input_file);
+    let reader = BufReader::new(input_file);
 
     let mut result = Vec::new();
 
     for line in reader.lines().into_iter() {
         let line = line.expect("I guess I couldn't read that line...");
-        let line_input = line
-            .parse::<usize>()
-            .expect("Line entry not parsable into usize.");
 
-        result.push(line_input);
+        result.push(result_parser(line));
     }
 
     result
