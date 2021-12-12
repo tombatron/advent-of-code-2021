@@ -1,30 +1,22 @@
 pub fn compute_power_consumption(readings: &Vec<Vec<usize>>) -> usize {
-    let mut i = readings[0].len() - 1;
-
     let mut gamma_bits = Vec::new();
     let mut epsilon_bits = Vec::new();
 
-    // TODO: Refactor this to only require a single loop.
+    let mut i = readings[0].len() - 1;
+
     loop {
-        let mut ones = 0;
-        let mut zeroes = 0;
+        let most_common = find_most_common_bit(&readings, i);
 
-        for row in readings {
-            let reading = row[i];
-
-            if reading == 0 {
-                ones += 1;
-            } else {
-                zeroes += 1;
+        match most_common {
+            MostCommon::One => {
+                gamma_bits.push(1);
+                epsilon_bits.push(0);
             }
-        }
-
-        if ones > zeroes {
-            gamma_bits.push(1);
-            epsilon_bits.push(0);
-        } else {
-            gamma_bits.push(0);
-            epsilon_bits.push(1);
+            MostCommon::Zero => {
+                gamma_bits.push(0);
+                epsilon_bits.push(1);
+            }
+            MostCommon::Equal => (),
         }
 
         if i == 0 {
@@ -202,7 +194,7 @@ mod test {
         let result = compute_life_support_rating(&input);
 
         assert_eq!(2829354, result);
-    }    
+    }
 
     fn parse_line(line: String) -> Vec<usize> {
         let mut result = Vec::new();
