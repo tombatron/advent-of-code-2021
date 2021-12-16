@@ -11,7 +11,7 @@ pub fn get_external_input<T>(file_name: &str, result_parser: fn(String) -> T) ->
 
     let mut result = Vec::new();
 
-    for line in reader.lines().into_iter() {
+    for line in reader.lines() {
         let line = line.expect("I guess I couldn't read that line...");
 
         result.push(result_parser(line));
