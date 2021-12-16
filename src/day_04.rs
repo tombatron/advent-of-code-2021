@@ -8,14 +8,18 @@ enum BingoBoardResult {
 #[derive(Clone, Copy)]
 struct BingoBoard {
     board: [usize; 25],
+    winner: bool,
 }
 
 impl BingoBoard {
     pub fn new(items: [usize; 25]) -> Self {
-        BingoBoard { board: items }
+        BingoBoard {
+            board: items,
+            winner: false,
+        }
     }
 
-    pub fn check_winner(self, marked_numbers: &Vec<usize>) -> BingoBoardResult {
+    pub fn check_winner(mut self, marked_numbers: &Vec<usize>) -> BingoBoardResult {
         if marked_numbers.len() < 5 {
             return BingoBoardResult::NotWinner;
         }
@@ -54,6 +58,8 @@ impl BingoBoard {
 
             let final_score = score * marked_numbers.last().unwrap();
 
+            self.winner = true;
+
             return BingoBoardResult::Winner(final_score);
         }
 
@@ -70,7 +76,7 @@ impl BingoBoardCollection {
         BingoBoardCollection { boards: boards }
     }
 
-    pub fn mark_numbers(&self, numbers: &Vec<usize>) -> Option<usize> {
+    pub fn first_winner(&self, numbers: &Vec<usize>) -> Option<usize> {
         let bs = self.boards.to_vec();
 
         let mut i = 5;
@@ -92,6 +98,34 @@ impl BingoBoardCollection {
 
         None
     }
+
+    pub fn last_winner(&mut self, numbers: &Vec<usize>) -> usize {
+        let mut i = 5;
+        let mut winners = 0;
+        let mut last_score = 0;
+
+        while i < numbers.len() && winners < self.boards.len() {
+            for b in self.boards.iter_mut() {
+                if b.winner
+                {
+                    continue;
+                }
+
+                match b.check_winner(&numbers[0..i].to_vec()) {
+                    BingoBoardResult::Winner(score) => {
+                        b.winner = true;
+                        last_score = score;
+                        winners += 1;
+                    }
+                    BingoBoardResult::NotWinner => (),
+                }
+            }
+
+            i += 1;
+        }
+
+        return last_score;
+    }
 }
 
 #[cfg(test)]
@@ -108,7 +142,7 @@ mod tests {
         let drawn_numbers = get_number_sequence(input_file_name);
         let boards = get_game_boards(input_file_name);
 
-        let result = boards.mark_numbers(&drawn_numbers).unwrap();
+        let result = boards.first_winner(&drawn_numbers).unwrap();
 
         assert_eq!(4512, result);
     }
@@ -120,10 +154,34 @@ mod tests {
         let drawn_numbers = get_number_sequence(input_file_name);
         let boards = get_game_boards(input_file_name);
 
-        let result = boards.mark_numbers(&drawn_numbers).unwrap();
+        let result = boards.first_winner(&drawn_numbers).unwrap();
 
         assert_eq!(4512, result);
     }
+
+    #[test]
+    fn part_two_sample_input_works() {
+        let input_file_name = "day_04_test_input.txt";
+
+        let drawn_numbers = get_number_sequence(input_file_name);
+        let mut boards = get_game_boards(input_file_name);
+
+        let result = boards.last_winner(&drawn_numbers);
+
+        assert_eq!(1924, result);
+    }
+
+    #[test]
+    fn part_two_external_input_works() {
+        let input_file_name = "day_04_input.txt";
+
+        let drawn_numbers = get_number_sequence(input_file_name);
+        let mut boards = get_game_boards(input_file_name);
+
+        let result = boards.last_winner(&drawn_numbers);
+
+        assert_eq!(30070, result);
+    }    
 
     fn get_number_sequence(file_name: &str) -> Vec<usize> {
         let input_file = File::open(file_name).expect("I guess I couldn't open that file...");
