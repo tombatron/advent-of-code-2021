@@ -111,6 +111,15 @@ mod tests {
         assert_eq!(12, result);
     }
 
+    #[test]
+    fn part_two_external_input_works() {
+        let lines = get_external_input("day_05_input.txt", parse_line);
+
+        let result = find_line_intersections(lines);
+
+        assert_eq!(12, result);
+    }    
+
     fn parse_line(line: String) -> LineSpec {
         let coordinate_pair_raw = line
             .split("->")
