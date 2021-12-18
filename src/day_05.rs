@@ -23,8 +23,17 @@ impl LineSpec {
         let y_increment;
 
         if x_change != 0 && y_change != 0 {
-            x_increment = if y_change < 0 { 1 } else { -1 };
-            y_increment = if x_change < 0 { 1 } else { -1 };
+            if self.begin.0 > self.end.0 {
+                x_increment = 1;
+            } else {
+                x_increment = -1;
+            }
+
+            if self.begin.1 > self.end.1 {
+                y_increment = 1;
+            } else {
+                y_increment = -1;
+            }            
         } else {
             let increment = if x_change < 0 || y_change < 0 { -1 } else { 1 };
 
