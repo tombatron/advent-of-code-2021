@@ -1,26 +1,31 @@
-pub fn simulate_fish(days: usize, initial_state: Vec<usize>) -> usize {
+pub fn simulate_fish(days: usize, initial_state: &mut Vec<usize>) -> usize {
     let mut current_day = 0;
 
-    let mut current_state = initial_state;
+    let current_state = initial_state;
 
     while current_day < days {
-        let mut next_state = Vec::new();
+        println!("Working on day {}", (current_day + 1));
 
-        for fish in current_state {
+        //let mut next_state = Vec::new();
+        let mut new_fish = Vec::new();
+
+        for fish in &mut *current_state {
             if let 1.. = fish {
-                next_state.push(fish - 1)
+                //next_state.push(fish - 1)
+                *fish -= 1;
             } else {
-                next_state.push(6);
-                next_state.push(8);
+                *fish = 6;
+
+                new_fish.push(8);
             }
         }
 
-        current_state = next_state;
+        current_state.extend(new_fish);
 
         current_day += 1;
     }
 
-    current_state.len()
+    (&current_state).len()
 }
 
 #[cfg(test)]
@@ -31,21 +36,30 @@ mod tests {
 
     #[test]
     fn part_one_sample_input_works() {
-        let sample_input = vec![3, 4, 3, 1, 2];
+        let mut sample_input = vec![3, 4, 3, 1, 2];
 
-        let result = simulate_fish(80, sample_input);
+        let result = simulate_fish(80, &mut sample_input);
 
         assert_eq!(5934, result);
     }
 
     #[test]
     fn part_one_external_input_work() {
-        let input = get_test_input();
+        let mut input = get_test_input();
 
-        let result = simulate_fish(80, input);
+        let result = simulate_fish(80, &mut input);
 
         assert_eq!(353274, result);
     }
+
+    #[test]
+    fn part_two_sample_input_works() {
+        let mut sample_input = vec![3, 4, 3, 1, 2];
+
+        let result = simulate_fish(256, &mut sample_input);
+
+        assert_eq!(26984457539, result);
+    }    
 
     fn get_test_input() -> Vec<usize> {
         let test_input = get_external_input("day_06_input.txt", parse_line);
