@@ -25,6 +25,8 @@ pub fn simulate_fish(days: usize, initial_state: Vec<usize>) -> usize {
 
 #[cfg(test)]
 mod tests {
+    use crate::aoc_utils::get_external_input;
+
     use super::simulate_fish;
 
     #[test]
@@ -34,5 +36,29 @@ mod tests {
         let result = simulate_fish(80, sample_input);
 
         assert_eq!(5934, result);
+    }
+
+    #[test]
+    fn part_one_external_input_work() {
+        let input = get_test_input();
+
+        let result = simulate_fish(80, input);
+
+        assert_eq!(353274, result);
+    }
+
+    fn get_test_input() -> Vec<usize> {
+        let test_input = get_external_input("day_06_input.txt", parse_line);
+
+        test_input.first().unwrap().to_vec()
+    }
+
+    fn parse_line(line: String) -> Vec<usize> {
+        line
+            .split(",")
+            .into_iter()
+            .map(|f| f.trim())
+            .map(|f| f.parse::<usize>().unwrap())
+            .collect::<Vec<usize>>()
     }
 }
